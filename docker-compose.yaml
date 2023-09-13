@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+    db:
+        image: postgres:latest
+        container_name: sreality-db
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: sreality-db
+        ports:
+            - "5432:5432"
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+            - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+            
+    backend:
+        build:
+            context: ./sreality_be
+        container_name: sreality-backend
+        depends_on:
+            - db
+        ports:
+            - "3000:3000"
+        environment:
+            DB_USER: user
+            DB_PASSWORD: password
+            DB_NAME: sreality-db
+            DB_PORT: 5432
+            DB_HOST: db
+            ORIGIN: http://localhost:8080
+
+    frontend:
+        build:
+            context: ./sreality_fe
+        container_name: sreality-frontend
+        ports:
+            - "8080:8080"
+        depends_on:
+            - backend
+            
+    scraper:
+        build:
+            context: ./scraper
+        container_name: scraper
+        depends_on:
+            - db
+        environment:
+            DB_USER: user
+            DB_PASSWORD: password
+            DB_NAME: sreality-db
+        
+volumes:
+    pg-data:
