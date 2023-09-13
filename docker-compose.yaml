@@ -34,6 +34,8 @@ services:
         build:
             context: ./sreality_fe
         container_name: sreality-frontend
+        environment:
+            VITE_PUBLIC_BACKEND_URL: http://localhost:3000
         ports:
             - "8080:8080"
         depends_on:
