@@ -16,3 +16,6 @@ docker compose build
 ```bash
 docker compose up
 ```
+
+### Run web
+http://localhost:8080
